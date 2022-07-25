@@ -20,7 +20,7 @@ def whats_new(session):
                                               attrs={'class': 'toctree-l1'})
     results = [('Ссылка на статью', 'Заголовок', 'Редактор, автор')]
 
-    for section in tqdm(sections_by_python, desc='Что нового?!'):
+    for section in tqdm(sections_by_python, desc='Загружаю последние новости'):
         version_a_tag = section.find('a')
         href = version_a_tag['href']
         version_link = urljoin(whats_new_url, href)
@@ -42,7 +42,7 @@ def latest_versions(session):
     soup = BeautifulSoup(response.text, 'lxml')
     sidebar = soup.find('div', {'class': 'sphinxsidebarwrapper'})
     ul_tags = sidebar.find_all('ul')
-    for ul in ul_tags:
+    for ul in tqdm(ul_tags, desc='Проверяю последние версии'):
         if 'All versions' in ul.text:
             a_tags = ul.find_all('a')
             break

@@ -4,8 +4,11 @@ from prettytable.colortable import ColorTable, Themes
 
 
 def control_output(results, cli_args):
-    if cli_args.pretty:
+    output = cli_args.output
+    if output == 'pretty':
         pretty_output(results)
+    elif output == 'file':
+        file_output(results, cli_args)
     else:
         default_output(results)
 
@@ -20,9 +23,13 @@ def pretty_output(results):
     table = ColorTable(theme=Themes.OCEAN)
 
     table.field_names = results[0]
-    table.align = 'l'
-    table.align['Версия'] = 'c'
-    table.align['Статус'] = 'c'
+    table.align = 'c'
     table.add_rows(results[1:])
 
     print(table)
+
+
+def file_output(results, cli_args):
+    # Сформируйте путь до директории results.
+    results_dir = ...
+    # Создайте директорию.
