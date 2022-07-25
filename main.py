@@ -9,11 +9,9 @@ from configs import configure_argument_parser
 from constants import BASE_DIR, MAIN_DOC_URL
 
 
-def whats_new():
+def whats_new(session):
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
-    session = requests_cache.CachedSession()
     response = session.get(whats_new_url)
-    response.encoding = 'utf-8'
     soup = BeautifulSoup(response.text, features='lxml')
     main_div = soup.find('section', attrs={'id': 'what-s-new-in-python'})
     div_with_ul = main_div.find('div', attrs={'class': 'toctree-wrapper'})
@@ -29,16 +27,16 @@ def whats_new():
         response.encoding = 'utf-8'
         soup = BeautifulSoup(response.text, 'lxml')
         h1 = soup.find('h1')
+        h1_text = h1.text.replace('¶', '')
         dl = soup.find('dl')
         dl_text = dl.text.replace('\n', ' ')
-        results.append((version_link, h1.text, dl_text))
+        results.append((version_link, h1_text, dl_text))
 
     for row in results:
         print(*row)
 
 
-def latest_versions():
-    session = requests_cache.CachedSession()
+def latest_versions(session):
     response = session.get(MAIN_DOC_URL)
     response.encoding = 'utf-8'
     soup = BeautifulSoup(response.text, 'lxml')
@@ -67,9 +65,8 @@ def latest_versions():
         print(*row)
 
 
-def download():
+def download(session):
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
-    session = requests_cache.CachedSession()
     response = session.get(downloads_url)
     response.encoding = 'utf-8'
     soup = BeautifulSoup(response.text, 'lxml')
@@ -97,15 +94,13 @@ MODE_TO_FUNCTION = {
 
 
 def main():
-    # Конфигурация парсера аргументов командной строки —
-    # передача в функцию допустимых вариантов выбора.
     arg_parser = configure_argument_parser(MODE_TO_FUNCTION.keys())
-    # Считывание аргументов из командной строки.
     args = arg_parser.parse_args()
-    # Получение из аргументов командной строки нужного режима работы.
+    session = requests_cache.CachedSession()
+    if args.clear_cache:
+        session.cache.clear()
     parser_mode = args.mode
-    # Поиск и вызов нужной функции по ключу словаря.
-    results = MODE_TO_FUNCTION[parser_mode]()
+    results = MODE_TO_FUNCTION[parser_mode](session)
 
 
 if __name__ == '__main__':
