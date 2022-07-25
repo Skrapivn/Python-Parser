@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from configs import configure_argument_parser
 from constants import BASE_DIR, MAIN_DOC_URL
+from outputs import control_output
 
 
 def whats_new(session):
@@ -17,7 +18,7 @@ def whats_new(session):
     div_with_ul = main_div.find('div', attrs={'class': 'toctree-wrapper'})
     sections_by_python = div_with_ul.find_all('li',
                                               attrs={'class': 'toctree-l1'})
-    results = []
+    results = [('Ссылка на статью', 'Заголовок', 'Редактор, автор')]
 
     for section in tqdm(sections_by_python, desc='Что нового?!'):
         version_a_tag = section.find('a')
@@ -32,8 +33,7 @@ def whats_new(session):
         dl_text = dl.text.replace('\n', ' ')
         results.append((version_link, h1_text, dl_text))
 
-    for row in results:
-        print(*row)
+    return results
 
 
 def latest_versions(session):
@@ -49,7 +49,7 @@ def latest_versions(session):
     else:
         raise Exception('Не найден список c версиями Python')
 
-    results = []
+    results = [('Ссылка на документацию', 'Версия', 'Статус')]
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
 
     for a_tag in a_tags:
@@ -61,8 +61,7 @@ def latest_versions(session):
             version, status = a_tag.text, ''
         results.append((link, version, status))
 
-    for row in results:
-        print(*row)
+    return results
 
 
 def download(session):
@@ -97,10 +96,14 @@ def main():
     arg_parser = configure_argument_parser(MODE_TO_FUNCTION.keys())
     args = arg_parser.parse_args()
     session = requests_cache.CachedSession()
+
     if args.clear_cache:
         session.cache.clear()
     parser_mode = args.mode
     results = MODE_TO_FUNCTION[parser_mode](session)
+
+    if results is not None:
+        control_output(results, args)
 
 
 if __name__ == '__main__':
