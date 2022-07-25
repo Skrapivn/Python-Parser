@@ -5,6 +5,7 @@ import requests_cache
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
+from configs import configure_argument_parser
 from constants import BASE_DIR, MAIN_DOC_URL
 
 
@@ -86,3 +87,26 @@ def download():
     response = session.get(archive_url)
     with open(archive_path, 'wb') as file:
         file.write(response.content)
+
+
+MODE_TO_FUNCTION = {
+    'whats-new': whats_new,
+    'latest-versions': latest_versions,
+    'download': download,
+}
+
+
+def main():
+    # Конфигурация парсера аргументов командной строки —
+    # передача в функцию допустимых вариантов выбора.
+    arg_parser = configure_argument_parser(MODE_TO_FUNCTION.keys())
+    # Считывание аргументов из командной строки.
+    args = arg_parser.parse_args()
+    # Получение из аргументов командной строки нужного режима работы.
+    parser_mode = args.mode
+    # Поиск и вызов нужной функции по ключу словаря.
+    results = MODE_TO_FUNCTION[parser_mode]()
+
+
+if __name__ == '__main__':
+    main()
