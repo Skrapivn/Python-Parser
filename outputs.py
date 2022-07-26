@@ -1,8 +1,11 @@
-# outputs.py
+import csv
+import datetime as dt
+import logging
+
 from prettytable import PrettyTable
 from prettytable.colortable import ColorTable, Themes
 
-from constants import BASE_DIR
+from constants import BASE_DIR, DATETIME_FORMAT
 
 
 def control_output(results, cli_args):
@@ -32,7 +35,15 @@ def pretty_output(results):
 
 
 def file_output(results, cli_args):
-    # Сформируйте путь до директории results.
     results_dir = BASE_DIR / 'results'
-    # Создайте директорию.
     results_dir.mkdir(exist_ok=True)
+    parser_mode = cli_args.mode
+    now = dt.datetime.now()
+    now_formatted = now.strftime(DATETIME_FORMAT)
+    file_name = f'{parser_mode}_{now_formatted}.csv'
+    file_path = results_dir / file_name
+
+    with open(file_path, 'w', encoding='utf-8') as f:
+        writer = csv.writer(f, dialect='unix')
+        writer.writerows(results)
+    logging.info(f'Файл с результатами был сохранён: {file_path}')
