@@ -2,6 +2,8 @@
 from prettytable import PrettyTable
 from prettytable.colortable import ColorTable, Themes
 
+from constants import BASE_DIR
+
 
 def control_output(results, cli_args):
     output = cli_args.output
@@ -31,5 +33,6 @@ def pretty_output(results):
 
 def file_output(results, cli_args):
     # Сформируйте путь до директории results.
-    results_dir = ...
+    results_dir = BASE_DIR / 'results'
     # Создайте директорию.
+    results_dir.mkdir(exist_ok=True)
