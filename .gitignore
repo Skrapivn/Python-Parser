@@ -132,3 +132,7 @@ dmypy.json
 .idea
 .vscode/
 http_cache.sqlite
+results/
+downloads/
+logs/
+*.csv
