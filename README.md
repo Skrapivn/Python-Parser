@@ -19,7 +19,7 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-  -c, --clear-cache  Очистка кеша
+  -c, --clear-cache  Очистка кэша
   -o {pretty,file}, --output {pretty,file}  Дополнительные способы вывода данных
 ```
 Режимы работы парсера:
@@ -29,7 +29,7 @@ optional arguments:
 - pep
 
 Очистка кеша:
-- ```-с ``` - делает очистку 
+- ```-с ``` - делает очистку кэша в сессии
 
 Дополнительные способы вывода данных:
 - ```-o pretty``` - вывод результатов в консоль в виде таблицы;
